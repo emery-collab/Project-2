@@ -46,17 +46,24 @@ public:
     }
 
     template <typename T>
-    void AddComponent(EntityID entity, T component) {}
+    void AddComponent(EntityID entity, T component) {
+        assert(validEntity(entity.mID) && "Invalid Entity");
+        assert(!HasComponent<T>(entity) && "Entity Does not have specified type");
+        size_t column = indexOf<T>();
+        ComponentStorage<T>& = 
+    }
 
     template <typename T>
-    void RemoveComponent(EntityID entity) {}
+    void RemoveComponent(EntityID entity) {
+
+    }
 
     template <typename T>
     bool HasComponent(EntityID entity) const {
         if (!validEntity(entity.mId)) {
             return false;
         }
-        size_t column = indexOf<Component>();
+        size_t column = indexOf<Components>();
         size_t registryIndex = mComponentIndices[entity.mId][column];
         return registryIndex != kNullComponent;
     }
@@ -64,7 +71,9 @@ public:
     template <typename T>
     T& GetComponent(EntityID entity) {
         // Re-write code
-        static T dummy;
+        assert(hasComponent<T>(entity.mID) && "No component type here.");
+        size_t column = indexOf<T>();
+        size_t registryIndex = mComponentIndices[entity.mID][column];
         return dummy;
     }
 
