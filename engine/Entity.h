@@ -14,6 +14,7 @@ using EntityID = size_t;
 class Entity {
 public:
     EntityID GetID() const { return mID; }
+    std::string GetType() const { return mType; }
 
 private:
     Entity() = default;
