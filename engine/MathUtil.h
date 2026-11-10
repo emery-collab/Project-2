@@ -11,6 +11,10 @@ struct Point2D {
     float x, y;
     Point2D(float x = 0, float y = 0) : x(x), y(y) {}
     Point2D(int x, int y) : x(x), y(y) {}
+    Point2D operator+(const Point2D &other) const { return Point2D(x + other.x, y + other.y); }
+    Point2D operator-(const Point2D &other) const { return Point2D(x - other.x, y - other.y); }
+    Point2D operator*(const float &scalar) const  { return Point2D(x * scalar, y * scalar); }
+    Point2D operator/(const float &scalar) const  { if(scalar !=0) return Point2D(x / scalar, y / scalar); }
 };
 
 [[maybe_unused]] static std::ostream& operator<<(std::ostream& os, const Point2D& p) {
@@ -45,6 +49,8 @@ struct Circle {
 struct Rect {
     Point2D topLeft;
     float width, height;
+
+    Rect(Point2D tl = {0, 0}, float w = 0, float h = 0) : topLeft(tl), width(w), height(h) {}
 };
 
 [[maybe_unused]] static std::ostream& operator<<(std::ostream& os, const Rect& r) {
