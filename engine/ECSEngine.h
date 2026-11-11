@@ -74,13 +74,34 @@ private:
 template <typename... Components>
 ECSEngine<Components...>::ECSEngine(unsigned int width, unsigned int height,
                                     const std::string& name)
-    : mWindowManager(width, height, name) {}
+    : mWindowManager(width, height, name), running(true), step(false), debug(0) {}
 
 template <typename... Components>
 ECSEngine<Components...>::~ECSEngine() {}
 
 template <typename... Components>
-void ECSEngine<Components...>::Run() {}
+void ECSEngine<Components...>::Run() {
+    
+    auto window = mWindowManager.GetWindow();
+    while (window->isOpen() && running) {
+
+        // 1. Calculate elapsed time since the previous frame.
+        mDeltaTime = mClock.restart().asSeconds();
+
+        // 2. Process window and keyboard events.
+        if (!ProcessEvents()) {
+            break;
+        }
+
+        // 3. Clear the previous frame.
+        window->clear();
+
+        // 4. Run all registered systems.
+        if (!mSystemManager.Run(this)) {
+            break;
+        }
+    }
+}
 
 template <typename... Components>
 bool ECSEngine<Components...>::ProcessEvents() {
