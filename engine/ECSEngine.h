@@ -27,6 +27,9 @@ public:
     virtual SpriteManager& GetSpriteManager() = 0;
     virtual EntityManager<Components...>& GetEntityManager() = 0;
     virtual WindowManager& GetWindowManager() = 0;
+
+    // Returns the time elapsed since the previous frame, in seconds.
+    virtual float GetDeltaTime() const = 0;
 };
 
 template <typename... Components>
@@ -47,6 +50,8 @@ public:
 
     SystemManager<Components...>& GetSystemManager() { return mSystemManager; }
 
+    float GetDeltaTime() const override { return mDeltaTime; }
+
 private:
     bool ProcessEvents();
     void DebugDraw();
@@ -56,6 +61,10 @@ private:
     SpriteManager mSpriteManager;
     SoundManager mSoundManager;
     WindowManager mWindowManager;
+
+    // Tracks elapsed time between frames.
+    sf::Clock mClock;
+    float mDeltaTime = 0.0f;
 
     // For debugging - pause and step the engine
     bool running, step;
