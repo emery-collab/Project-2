@@ -81,7 +81,7 @@ ECSEngine<Components...>::~ECSEngine() {}
 
 template <typename... Components>
 void ECSEngine<Components...>::Run() {
-    
+
     auto window = mWindowManager.GetWindow();
     while (window->isOpen() && running) {
 
@@ -105,7 +105,84 @@ void ECSEngine<Components...>::Run() {
 
 template <typename... Components>
 bool ECSEngine<Components...>::ProcessEvents() {
-    return true;
+    auto window = mWindowManager.GetWindow();
+    auto& em = mEntityManager;
+
+    // Save the previous frame's keyboard state.
+    for (const Entity& entity : em) {
+        EntityID id = entity.GetID();
+
+        if (!em.validEntity(id)) {
+            continue;
+        }
+
+        if (!em.HasComponent<InputComponent>(id)) {
+            continue;
+        }
+
+        auto& input = em.GetComponent<InputComponent>(id);
+
+        input.lastKeydown = input.keydown;
+    }
+
+    // Process all pending SFML events.
+    while (const std::optional event = window->pollEvent()) {
+
+        // Handle window close.
+        if (event->is<sf::Event::Closed>()) {
+            window->close();
+        }
+
+        // Handle a key press.
+        else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+
+            std::size_t key = static_cast<std::size_t>(keyPressed->scancode);
+
+            for (const Entity& entity : em) {
+                EntityID id = entity.GetID();
+
+                if (!em.validEntity(id)) {
+                    continue;
+                }
+
+                if (!em.HasComponent<InputComponent>(id)) {
+                    continue;
+                }
+
+                auto& input = em.GetComponent<InputComponent>(id);
+
+                if (key < input.keydown.size()) {
+                    input.keydown.set(key);
+                }
+            }
+        }
+
+        // Handle a key release.
+        else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
+            
+            std::size_t key = static_cast<std::size_t>(keyReleased->scancode);
+
+            for (const Entity& entity : em) {
+                EntityID id = entity.GetID();
+
+                if (!em.validEntity(id)) {
+                    continue;
+                }
+
+                if (!em.HasComponent<InputComponent>(id)) {
+                    continue;
+                }
+
+                auto& input = em.GetComponent<InputComponent>(id);
+
+                if (key < input.keydown.size()) {
+                    input.keydown.reset(key);
+                }
+            }
+        }
+    }
+
+    return window->isOpen();
 }
 
 template <typename... Components>
