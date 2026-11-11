@@ -31,16 +31,13 @@ public:
             }
 
             // Movement requires both components.
-            if (!em.template HasComponent<LocationComponent>(id) ||
-                !em.template HasComponent<MovementComponent>(id)) {
+            if (!em.template HasComponent<LocationComponent>(id) || !em.template HasComponent<MovementComponent>(id)) {
                 continue;
             }
 
-            auto& location =
-                em.template GetComponent<LocationComponent>(id);
+            auto& location = em.template GetComponent<LocationComponent>(id);
 
-            auto& movement =
-                em.template GetComponent<MovementComponent>(id);
+            auto& movement = em.template GetComponent<MovementComponent>(id);
 
             // Update position using velocity and elapsed time.
             location.loc = location.loc + movement.velocity * dt;
