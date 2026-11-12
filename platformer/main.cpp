@@ -172,6 +172,14 @@ int main(int argc, char* argv[]) {
 
     // Load sounds
 
+    engine.GetSoundManager().RegisterSound(gResourcePath + "error_008.ogg", "error");
+    engine.GetSoundManager().RegisterSound(gResourcePath + "footstep_grass_003.ogg", "grassFootsteps");
+    engine.GetSoundManager().RegisterSound(gResourcePath + "footstep_snow_001.ogg", "snowFootsteps");
+    engine.GetSoundManager().RegisterSound(gResourcePath + "laserLarge_000.ogg", "laser");
+    engine.GetSoundManager().RegisterSound(gResourcePath + "sfx_gem.ogg", "gem");
+    engine.GetSoundManager().RegisterSound(gResourcePath + "sfx_jump-high.ogg", "highJump");
+    engine.GetSoundManager().RegisterSound(gResourcePath + "sfx_jump.ogg", "jump");
+
     // Load maps it isn't pretty but it works
     //load world map
     LoadMap(engine, gResourcePath, "sky.map");
