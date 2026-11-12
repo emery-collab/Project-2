@@ -173,7 +173,6 @@ int main(int argc, char* argv[]) {
     engine.GetSoundManager().RegisterSound(gResourcePath + "sfx_jump-high.ogg", "highJump");
     engine.GetSoundManager().RegisterSound(gResourcePath + "sfx_jump.ogg", "jump");
 
-    // Load maps it isn't pretty but it works
     //load world map
     LoadMap(engine, gResourcePath, "sky.map");
     LoadMap(engine, gResourcePath, "world.map");
@@ -218,8 +217,54 @@ int main(int argc, char* argv[]) {
     em.AddComponent(id, respwComp);
     
     // Setup score component
+    ECSEngine::ScoreComponent scoreComp{};
+    for(int i = 0; i < 10; ++i){
+        float x = 832;
+        float y = (13-i) * 64;
+        scoreComp.digitTextureID[i] = engine.GetSpriteManager().RegisterTexture(gResourcePath+"spritesheet-tiles-default.png",
+                ECSEngine::Rect (ECSEngine::Point2D(x, y), 64, 64));
+    }
+    for(int j = 0; j<3; ++j){
+        scoreComp.digitID[j] = em.CreateEntity(std::string("digit"+std::to_string(j)));
+        //location component
+        ECSEngine::LocationComponent locCompScore{};
+        locCompScore.loc = ECSEngine::Point2D(16+j*50,16);
+        em.AddComponent(scoreComp.digitID[j], locCompScore);
+        //Sprite component
+        ECSEngine::SpriteComponent sprCompScore{};
+        sprCompScore.textureID = scoreComp.digitTextureID[0];
+        sprCompScore.bounds = ECSEngine::Rect(ECSEngine::Point2D(0.0f, 0.0f), 64, 64);
+        sprCompScore.worldSpace = false;
+        em.AddComponent(scoreComp.digitID[j], sprCompScore);
+    }
+    ECSEngine::EntityID scoreEntity = em.CreateEntity("score");
+    em.AddComponent(scoreEntity, scoreComp);
 
     // Setup Camera
+    ECSEngine::EntityID camID = em.CreateEntity("camera");
+    ECSEngine::CameraComponent camComp{};
+    //fixedy is middle of screen. 
+    float fixedY = 896.0f / 2;
+    ECSEngine::Rect window = engine.GetWindowManager().GetWindowBounds();
+    camComp.position = ECSEngine::Point2D(spawn.x,fixedY);
+    //14 rows
+    camComp.worldUnitsPerPixel = (14.0f*64.0f)/768.0f;
+    camComp.hardExclusion = ECSEngine::Rect(ECSEngine::Point2D(0.1* window.width, 0), 0.8 * window.width,window.height);
+    camComp.softExclusion = ECSEngine::Rect(ECSEngine::Point2D(0.3* window.width, 0), 0.4 * window.width,window.height);
+    //speed of camera movement
+    camComp.speed = 200.0f;
+    em.AddComponent(camID, camComp);
+    //camera follow component
+    ECSEngine::CameraFollower camFollComp{};
+    camFollComp.entityID = id;
+    em.AddComponent(camID, camFollComp);
+    //camera shake component
+    ECSEngine::CameraShake camShkeComp{};
+    camShkeComp.frameLimit = 0;
+    camShkeComp.offset = ECSEngine::Point2D(0,0);
+    em.AddComponent(camID, camShkeComp);
+
+
 
     // Add all systems
     auto& sm = engine.GetSystemManager();
