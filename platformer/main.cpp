@@ -148,15 +148,8 @@ void LoadMap(Engine& engine, const std::string& path, const std::string& file) {
                 em.AddComponent(id, spwComp);
 
             }
-
-
-
-
-
         }   
     }
-
-    
 }
 
 
@@ -172,19 +165,58 @@ int main(int argc, char* argv[]) {
 
     // Load sounds
 
+    engine.GetSoundManager().RegisterSound(gResourcePath + "error_008.ogg", "error");
+    engine.GetSoundManager().RegisterSound(gResourcePath + "footstep_grass_003.ogg", "grassFootsteps");
+    engine.GetSoundManager().RegisterSound(gResourcePath + "footstep_snow_001.ogg", "snowFootsteps");
+    engine.GetSoundManager().RegisterSound(gResourcePath + "laserLarge_000.ogg", "laser");
+    engine.GetSoundManager().RegisterSound(gResourcePath + "sfx_gem.ogg", "gem");
+    engine.GetSoundManager().RegisterSound(gResourcePath + "sfx_jump-high.ogg", "highJump");
+    engine.GetSoundManager().RegisterSound(gResourcePath + "sfx_jump.ogg", "jump");
+
     // Load maps it isn't pretty but it works
     //load world map
     LoadMap(engine, gResourcePath, "sky.map");
     LoadMap(engine, gResourcePath, "world.map");
 
-
-
-
-    
-
-
     // Place player
-
+    auto& em = engine.GetEntityManager();
+    ECSEngine::SpriteID playerSpriteID;
+    //purple guy
+    playerSpriteID = engine.GetSpriteManager().RegisterTexture(gResourcePath+"spritesheet-characters-default.png",
+                ECSEngine::Rect(ECSEngine::Point2D(128, 128), 128, 128));
+    ECSEngine::EntityID id = em.CreateEntity("player");
+    ECSEngine::Point2D spawn(13 * 64.0f, 6 * 64.0f);
+    //location component
+    ECSEngine::LocationComponent locComp{};
+    locComp.loc = ECSEngine::Point2D(spawn);
+    em.AddComponent(id, locComp);
+    //Sprite component
+    ECSEngine::SpriteComponent sprComp{};
+    sprComp.textureID = playerSpriteID;
+    sprComp.bounds = ECSEngine::Rect(ECSEngine::Point2D(0.0f, 0.0f), 64, 64);
+    sprComp.worldSpace = true;
+    em.AddComponent(id, sprComp);
+    //collision
+    ECSEngine::CollisionComponent collComp{};
+    collComp.collisionBox = ECSEngine::Rect(ECSEngine::Point2D(2,2), 124,124);
+    collComp.previousCollisionBox = ECSEngine::Rect(ECSEngine::Point2D(2,2), 60,60);
+    em.AddComponent(id, collComp);
+    //playermovement
+    ECSEngine::MovementComponent movComp{};
+    movComp.velocity = ECSEngine::Point2D(0,0);
+    em.AddComponent(id, movComp);
+    //gravity in pixels
+    float gravity = 1500;
+    ECSEngine::GravityComponent grvComp{ECSEngine::Point2D(0.0f,gravity)};
+    em.AddComponent(id, grvComp);
+    //inputComponent
+    ECSEngine::InputComponent inptComp{id};
+    em.AddComponent(id, inptComp);
+    //respawn 
+    ECSEngine::RespawnComponent respwComp{};
+    respwComp.loc = spawn;
+    em.AddComponent(id, respwComp);
+    
     // Setup score component
 
     // Setup Camera
