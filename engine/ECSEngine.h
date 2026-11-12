@@ -116,11 +116,11 @@ bool ECSEngine<Components...>::ProcessEvents() {
             continue;
         }
 
-        if (!em.HasComponent<InputComponent>(id)) {
+        if (!em.template HasComponent<InputComponent>(id)) {
             continue;
         }
 
-        auto& input = em.GetComponent<InputComponent>(id);
+        auto& input = em.template GetComponent<InputComponent>(id);
 
         input.lastKeydown = input.keydown;
     }
@@ -145,11 +145,11 @@ bool ECSEngine<Components...>::ProcessEvents() {
                     continue;
                 }
 
-                if (!em.HasComponent<InputComponent>(id)) {
+                if (!em.template HasComponent<InputComponent>(id)) {
                     continue;
                 }
 
-                auto& input = em.GetComponent<InputComponent>(id);
+                auto& input = em.template GetComponent<InputComponent>(id);
 
                 if (key < input.keydown.size()) {
                     input.keydown.set(key);
@@ -169,11 +169,11 @@ bool ECSEngine<Components...>::ProcessEvents() {
                     continue;
                 }
 
-                if (!em.HasComponent<InputComponent>(id)) {
+                if (!em.template HasComponent<InputComponent>(id)) {
                     continue;
                 }
 
-                auto& input = em.GetComponent<InputComponent>(id);
+                auto& input = em.template GetComponent<InputComponent>(id);
 
                 if (key < input.keydown.size()) {
                     input.keydown.reset(key);

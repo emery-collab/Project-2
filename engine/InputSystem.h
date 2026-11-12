@@ -10,6 +10,7 @@ const float kJumpVelocity = 25;
 const float kGroundRunAcceleration = 5;
 const float kAirRunAcceleration = 4;
 const float kDashInterval = 25;
+constexpr float kWallJumpHorizontalVelocity = 300.0f;
 
 // added a helper function for easing out of a dash
 inline float Approach(float current, float target, float amount) {

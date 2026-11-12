@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+#include "Keyboard.h"
 #include "LocationComponent.h"
 #include "CollisionComponent.h"
 #include "InputComponent.h"
@@ -10,6 +11,12 @@
 
 namespace ECSEngine
 {
+
+constexpr float kWallSlideVelocity = 100.0f;
+constexpr float kFallingGravityMultiplier = 1.5f;
+constexpr float kFastFallMultiplier = 2.0f;
+constexpr float kMaximumFallVelocity = 900.0f;
+
 
 template <typename... Components>
 class GravitySystem : public System<Components...> {
