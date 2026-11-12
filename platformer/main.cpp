@@ -40,10 +40,10 @@ struct loadedSprites{
     int locToply = 1;
     int locW = 1;
     int locH = 1;
-    int bbToplx = 1;
-    int bbToply = 1;
-    int bbW = 1;
-    int bbH = 1;
+    int bbToplx = 0;
+    int bbToply = 0;
+    int bbW = 0;
+    int bbH = 0;
 };
 struct mapOrign{
 
@@ -54,6 +54,7 @@ struct mapOrign{
     int gridW = 1;
     int gridH = 1;
 };
+
 int main(int argc, char* argv[]) {
     if (argc >= 3 && argv[1] == std::string("-path")) {
         gResourcePath = argv[2];
@@ -66,11 +67,9 @@ int main(int argc, char* argv[]) {
 
     // Load sounds
 
-    // Load maps
-    // ifstream is used for reading files
-    // We'll read from a file called Sample.txt
+    // Load maps it isn't pretty but it works
+    //load world map
     std::ifstream inf{ gResourcePath+"world.map" };
-
     // If we couldn't open the output file stream for reading
     if (!inf)
     {
@@ -78,16 +77,15 @@ int main(int argc, char* argv[]) {
         std::cerr << "Uh oh, map could not be opened for reading!\n";
         return 1;
     }
-
-    // While there's still stuff left to read
     std::string strInput{};
-
     std::string state ="null";
     loadedSprites ls;
     //reading dictionary 2
     inf >> state >> ls.dictIdent;
     std::cout << "state: "<< state << '\n';
     std::vector<loadedSprites> spriteVector = {};
+    //dictionary 1
+    // h spritesheet-backgrounds-default.png 256 768 256 256
     while (state == "dictionary"){
         inf >> strInput;
         std::cout << "current str in dict: "<< strInput << '\n';
@@ -102,29 +100,81 @@ int main(int argc, char* argv[]) {
         }
     }
     for (auto i : spriteVector)
-        std::cout << i.path << "\n";
+        std::cout << i.spriteName << "\n";
 
     mapOrign mp;
     //map origin 0 0 tile 64 64 size 64 14
     inf >> state >> mp.Toplx >> mp.Toply;
-     std::cout << " new state: " << state << '\n';
-    inf >> state >> mp.tileW >> mp.tileH;
-     std::cout << " new state: " << state << '\n';
-    inf >> state >> mp.gridW  >> mp.gridH;
     std::cout << " new state: " << state << '\n';
-    std::cout << " mp.Toplx : " << mp.Toplx  << '\n';
-    std::cout << " mp.Toply: " << mp.Toply<< '\n';
-    std::cout << " mp.W : " << mp.tileW << '\n';
-    std::cout << " mp.H: " << mp.tileH<< '\n';
-    std::cout << " mpGridy: " << mp.gridH << '\n';
-    std::cout << " mpGridx: " << mp.gridW << '\n';
-    std::cout << " mpGridy: " << mp.gridH << '\n';
+    inf >> state >> mp.tileW >> mp.tileH;
+    std::cout << " new state: " << state << '\n';
+    inf >> state >> mp.gridW  >> mp.gridH;
+
     std::vector<std::string> map = {};
     for(int i = 0; i < mp.gridH; ++i){
         std::getline(inf, strInput);
-        std::cout << "inside mpGrid: " << strInput << '\n';
-        map.push_back(strInput);
+        //skipping blank line
+        if(i!= 0){
+            std::cout << "inside mpGrid: " << strInput << '\n';
+            map.push_back(strInput);
+        }
+
     }
+
+    //skymap
+    std::ifstream inf2{ gResourcePath+"sky.map" };
+    // If we couldn't open the output file stream for reading
+    if (!inf2)
+    {
+        // Print an error and exit
+        std::cerr << "Uh oh, map could not be opened for reading!\n";
+        return 1;
+    }
+    loadedSprites ls2;
+    //reading dictionary 2
+    inf2 >> state >> ls2.dictIdent;
+    std::cout << "state: "<< state << '\n';
+    std::cout << "ls2.dictIdent: "<< ls2.dictIdent << '\n';
+    std::vector<loadedSprites> spriteVector2 = {};
+    std::cout << "before str in dict2: "<< strInput << '\n';
+    //h spritesheet-backgrounds-default.png 256 768 256 256
+    while (state == "dictionary"){
+        inf2 >> strInput;
+        std::cout << "current str in dict2: "<< strInput << '\n';
+        if(strInput.length()==1){
+            ls2.spriteName = strInput[0];
+            inf2 >> ls2.path >> ls2.locToplx >>ls2.locToply >> ls2.locW >> ls2.locH;
+            std::cout << "current ls2.path in dict2 part 2: "<< ls2.path << '\n';
+            std::cout << "current ls2.locToplx in dict2 part 2: "<< ls2.locToplx << '\n';
+            spriteVector.push_back(ls2);
+        }else{
+            std::cout << "leaving dict: "<< strInput << '\n';
+            state = strInput;
+        }
+    }
+    for (auto i : spriteVector2)
+        std::cout << i.spriteName << "\n";
+
+    mapOrign mp2;
+    //map origin 0 0 tile 64 64 size 64 14
+    inf2 >> state >> mp2.Toplx >> mp2.Toply;
+    std::cout << " new state: " << state << '\n';
+    inf2 >> state >> mp2.tileW >> mp2.tileH;
+    std::cout << " new state: " << state << '\n';
+    inf2 >> state >> mp2.gridW  >> mp2.gridH;
+
+    std::vector<std::string> map2 = {};
+    for(int i = 0; i < mp2.gridH; ++i){
+        std::getline(inf2, strInput);
+        
+        if(i!=0){
+            map2.push_back(strInput);
+            std::cout << "inside mpGrid: " << strInput << '\n';
+        }
+        
+    }
+    
+
 
     // Place player
 
