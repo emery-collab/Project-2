@@ -229,7 +229,7 @@ int main(int argc, char* argv[]) {
         scoreComp.digitID[j] = em.CreateEntity(std::string("digit"+std::to_string(j)));
         //location component
         ECSEngine::LocationComponent locCompScore{};
-        locCompScore.loc = ECSEngine::Point2D(16+j*50,16);
+        locCompScore.loc = ECSEngine::Point2D(16+j*64,16);
         em.AddComponent(scoreComp.digitID[j], locCompScore);
         //Sprite component
         ECSEngine::SpriteComponent sprCompScore{};
