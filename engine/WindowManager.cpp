@@ -11,7 +11,7 @@ std::shared_ptr<sf::RenderWindow> WindowManager::GetWindow() const { return mWin
 
 Rect WindowManager::GetWindowBounds() const { 
     sf::Vector2u wSize = mWindow->getSize();
-    Point2D topL = (0.f,0.f);
+    Point2D topL(0.f, 0.f);
     return Rect(topL,(float)wSize.x,(float)wSize.y); 
 }
 
