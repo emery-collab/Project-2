@@ -74,14 +74,14 @@ public:
                 if(shake.frameLimit>0){
                     float currShake = shake.frameLimit / 10.0f;
                     if(shake.frameLimit % 2 ==0){
-                        cam.position.y += currShake * shake.offset;
-                        SetWorldCenter(cam.position);
+                        cam.position.y += currShake * shake.offset.y;
+                        window.SetWorldCenter(cam.position);
                     }
                     else{
-                        cam.position.y -= currShake * shake.offset;
-                        SetWorldCenter(cam.position);
+                        cam.position.y -= currShake * shake.offset.y;
+                        window.SetWorldCenter(cam.position);
                     }
-                    frameLimit--;
+                    shake.frameLimit--;
 
                 }
                 break;
