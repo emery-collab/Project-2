@@ -91,6 +91,9 @@ public:
                 continue;
             }
 
+            // Remember whether the entity was grounded last frame.
+            const bool wasOnGround = collision.onGround;
+
             // Reset contact flags after InputSystem and GravitySystem
             // have used the previous frame's collision information.
             collision.onGround = false;
@@ -249,6 +252,11 @@ public:
                         }
                     }
                 }
+            // Play landing sound only when the player first touches the ground.
+            if (entity.GetType() == "player" && !wasOnGround && collision.onGround) {
+                engine->GetSoundManager().GetSound("grassFootsteps").play();
+            }
+            
             // end collision loop for object instance
             }
         }
