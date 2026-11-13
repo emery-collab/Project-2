@@ -96,9 +96,9 @@ public:
     T& GetComponent(EntityID entity) {
         static_assert(slot<T> != -1, "T is not in this EntityManager");        
         size_t column = slot<T>;
-        std::cout<< "Column: " << column << "\n";
+        //std::cout<< "Column: " << column << "\n";
         size_t storageIndex = mComponentIndices[entity][column];
-        std::cout<< "storage index: " << storageIndex << "\n";
+        //std::cout<< "storage index: " << storageIndex << "\n";
         ComponentStorage<T>& storage = GetComponentStorage<T>();
         return storage.mStorage[storageIndex];
     }
