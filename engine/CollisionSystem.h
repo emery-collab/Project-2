@@ -66,6 +66,13 @@ public:
                 continue;
             }
 
+            // Reset contact flags after InputSystem and GravitySystem
+            // have used the previous frame's collision information.
+            collision.onGround = false;
+            collision.onCeiling = false;
+            collision.onLeftWall = false;
+            collision.onRightWall = false;
+
             auto& location = em.template GetComponent<LocationComponent>(id);
             auto& movement = em.template GetComponent<MovementComponent>(id);
 
@@ -264,7 +271,7 @@ public:
                         em.template HasComponent<RespawnComponent>(respawnID)) {
                         const auto& respawn = em.template GetComponent<RespawnComponent>(respawnID);
                         playerLocation.loc = respawn.loc;
-                        
+
                         if (em.template HasComponent<MovementComponent>(playerID)) {
                             auto& velocity = em.template GetComponent<MovementComponent>(playerID);
                             velocity.velocity = Point2D(0.0f, 0.0f);
