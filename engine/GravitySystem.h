@@ -76,6 +76,10 @@ public:
             // Wall sliding limits downward velocity.
             if (wallSliding) {
                 movement.velocity.y = std::min(movement.velocity.y, kWallSlideVelocity);
+                auto& laser = engine->GetSoundManager().GetSound("laser");
+                if (laser.getStatus() != sf::Sound::Status::Playing) {
+                    laser.play();
+                }
                 continue;
             }
 

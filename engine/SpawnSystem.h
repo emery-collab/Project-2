@@ -74,7 +74,7 @@ public:
             // Sprite component.
             SpriteComponent sprite{};
             sprite.textureID = data.textureID;
-            sprite.bounds = Rect(Point2D(0.0f, 0.0f), 64, 64);
+            sprite.bounds = Rect(Point2D(0.0f, 00.0f), 64, 64);
             sprite.worldSpace = true;
             em.AddComponent(starID, sprite);
 
@@ -86,8 +86,8 @@ public:
             collision.onCeiling = false;
             collision.onLeftWall = false;
             collision.onRightWall = false;
-            collision.collisionBox = Rect(Point2D(0.0f, 0.0f), 64, 64);
-            collision.previousCollisionBox = Rect(data.location, 64, 64);
+            collision.collisionBox = Rect(Point2D(10.0f, 10.0f), 44, 44);
+            collision.previousCollisionBox = Rect(data.location, 44, 44);
             em.AddComponent(starID, collision);
 
             // Movement component with a random direction.
@@ -96,7 +96,9 @@ public:
 
             MovementComponent movement{};
             movement.velocity = Point2D(std::cos(angle) * speed, std::sin(angle) * speed);
+            GravityComponent gravity{Point2D(0.0f,1000.0f)};
             em.AddComponent(starID, movement);
+            em.AddComponent(starID, gravity);
         }
 
         return kContinue;

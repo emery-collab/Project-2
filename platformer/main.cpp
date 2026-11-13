@@ -66,11 +66,11 @@ void LoadMap(Engine& engine, const std::string& path, const std::string& file) {
     loadedSprites ls;
     //reading dictionary 2
     inf >> state >> ls.dictIdent;
-    std::cout << "state: "<< state << '\n';
+    //std::cout << "state: "<< state << '\n';
     std::unordered_map<char, loadedSprites> spriteMap;
     while (state == "dictionary"){
         inf >> strInput;
-        std::cout << "current str in dict: "<< strInput << '\n';
+        //std::cout << "current str in dict: "<< strInput << '\n';
         if(strInput.length()==1){
             ls.spriteName = strInput[0];
             inf >> ls.path >> ls.locToplx >>ls.locToply >> ls.locW >> ls.locH;
@@ -99,7 +99,7 @@ void LoadMap(Engine& engine, const std::string& path, const std::string& file) {
     std::getline(inf, strInput);
     for(int i = 0; i < mp.gridH; ++i){
         std::getline(inf, strInput);
-        std::cout << "inside mpGrid: " << strInput << '\n';
+        //std::cout << "inside mpGrid: " << strInput << '\n';
         map.push_back(strInput);
     }
     auto& em = engine.GetEntityManager();
@@ -134,7 +134,13 @@ void LoadMap(Engine& engine, const std::string& path, const std::string& file) {
                     entry.bbW, entry.bbH);
                 collComp.previousCollisionBox = ECSEngine::Rect(ECSEngine::Point2D(entry.bbToplx, entry.bbToply), 
                     entry.bbW, entry.bbH);
+                
+                if (ch == 'x') {
+                    collComp.doesDamage = 1;
+                }
+
                 em.AddComponent(id, collComp);
+            
             }
             if (ch == 'S') {
                 ECSEngine::SpawnComponent spwComp{};
@@ -142,8 +148,8 @@ void LoadMap(Engine& engine, const std::string& path, const std::string& file) {
                 spwComp.spawnType = "star";
                 spwComp.spawnTextureID = starID;
                 spwComp.timeToNextSpawn = 80;
-                spwComp.timeBetweenSpawns = 80;
-                spwComp.totalSpawns = 10;
+                spwComp.timeBetweenSpawns = 240;
+                spwComp.totalSpawns = 20;
 
                 em.AddComponent(id, spwComp);
 
@@ -234,7 +240,7 @@ int main(int argc, char* argv[]) {
         //Sprite component
         ECSEngine::SpriteComponent sprCompScore{};
         sprCompScore.textureID = scoreComp.digitTextureID[0];
-        sprCompScore.bounds = ECSEngine::Rect(ECSEngine::Point2D(0.0f, 0.0f), 64, 64);
+        sprCompScore.bounds = ECSEngine::Rect(ECSEngine::Point2D(16+j*64,16), 64, 64);
         sprCompScore.worldSpace = false;
         em.AddComponent(scoreComp.digitID[j], sprCompScore);
     }

@@ -81,21 +81,21 @@ public:
         }
 
         //temporary for debug of collision objects:
-        // for (const Entity& entity : em) {
-        //     EntityID id = entity.GetID();
-        //     if (!em.validEntity(id)) {
-        //         continue;
-        //     }
-        //     if(em.template HasComponent<LocationComponent>(id) && em.template HasComponent<CollisionComponent>(id)){
-        //         // World-space sprites need a location component.
-        //         auto& loc = em.template GetComponent<LocationComponent>(id);
-        //         auto& coll = em.template GetComponent<CollisionComponent>(id);
-        //         Rect collLocRect = GetWorldBox(loc,coll);
-        //         Rect convCollLocRect = windowManager.WorldToWindow(collLocRect);
-        //         windowManager.DebugFrameRect(convCollLocRect,255,0,0);   
+        for (const Entity& entity : em) {
+            EntityID id = entity.GetID();
+            if (!em.validEntity(id)) {
+                continue;
+            }
+            if(em.template HasComponent<LocationComponent>(id) && em.template HasComponent<CollisionComponent>(id)){
+                // World-space sprites need a location component.
+                auto& loc = em.template GetComponent<LocationComponent>(id);
+                auto& coll = em.template GetComponent<CollisionComponent>(id);
+                Rect collLocRect = GetWorldBox(loc,coll);
+                Rect convCollLocRect = windowManager.WorldToWindow(collLocRect);
+                windowManager.DebugFrameRect(convCollLocRect,255,0,0);   
 
-        //     }
-        // }
+            }
+        }
 
         window->display();
 
