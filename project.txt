@@ -1,0 +1,177 @@
+# CMPUT 350 - Project 2: Platformer
+Team: Sean Piatt, Emery Theroux
+
+============================================================
+1. OVERVIEW
+============================================================
+
+A 2D platformer built using our own Entity Component System (ECS) game engine. The engine (engine/) manages entities, components, input, movement, physics, collision detection, spawning, camera behaviour, and rendering. The game (platformer/) uses these systems to implement the player, world, obstacles, collectible stars, and score display.
+
+The engine separates entity data from the systems that process it. Components store information such as location, velocity, gravity, collision bounds, and sprites, while systems iterate over entities with the required components to perform their respective updates.
+
+Controls:
+  Arrow keys     Move left and right
+  Z              Jump / wall jump
+  C              Dash
+  Down           Fast fall
+
+============================================================
+2. ENGINE AND SYSTEM DESIGN
+============================================================
+
+ECS Engine (engine/ECSEngine.h)
+-------------------------------
+  - The ECSEngine class manages the main game loop and provides access to the entity manager, system manager, window manager, sprite manager, and sound manager.
+  - The engine processes SFML window and keyboard events, updating the relevant input information.
+  - Each frame, the engine executes the registered systems in their specified order. This allows the game logic to be separated into smaller systems that operate on shared entity components.
+  - Systems access engine resources through the EngineView interface rather than directly managing resource lifetimes.
+
+MovementSystem
+--------------
+  - Updates the location of entities using their current velocity and the elapsed frame time (delta time).
+  - Movement is calculated using velocity multiplied by delta time, rather than assuming a fixed amount of movement per frame.
+  - This makes movement consistent across different frame rates and allows velocity to be expressed in units per second.
+
+InputSystem
+-----------
+  - Processes the player's keyboard input and translates it into movement velocity.
+  - Horizontal movement uses acceleration rather than immediately setting the player's velocity. This allows the player to gradually accelerate up to a maximum running speed.
+  - The system supports both ground and air movement, allowing the player to adjust horizontal movement while jumping.
+  - Jumping uses the collision information from the previous frame to determine whether the player is grounded or can perform a wall jump.
+  - Releasing the jump key while ascending reduces upward velocity, allowing the player to control jump height.
+  - Dashing applies a horizontal velocity in the direction of movement and uses a cooldown to restrict dashing to once per second.
+
+GravitySystem
+-------------
+  - Applies gravity to entities that have both GravityComponent and MovementComponent.
+  - Gravity modifies vertical velocity over time rather than directly changing the entity's position.
+  - The system adjusts gravity and vertical velocity depending on the player's current movement and collision state.
+  - Falling is faster than rising, and holding the down key increases falling speed further.
+  - When the player is falling while pushing against a wall, wall sliding is activated. The player's downward velocity is limited, allowing them to slide slowly down the wall.
+  - Wall sliding also triggers its associated sound effect.
+
+CollisionLateSystem
+-------------------
+  - Saves the current collision bounds of entities before their movement and collision updates for the frame.
+  - These saved bounds allow the collision system to compare the previous and current positions of entities.
+  - This is important for detecting collisions reliably when objects move between frames and for determining how an entity entered a collision.
+
+CollisionSystem
+---------------
+  - Checks for collisions between entities using their collision components and bounding boxes.
+  - Uses the previous and current collision information to determine how objects have moved and to resolve collisions.
+  - Resolves collisions with static obstacles by correcting entity positions and adjusting velocity to prevent objects from passing through solid surfaces.
+  - Updates contact information such as whether an entity is touching the ground, ceiling, or either wall. Other systems use this information to determine jumping, wall sliding, and falling behaviour.
+  - Handles dynamic interactions with collectible stars. When the player collects a star, the star is removed and the player's score is increased.
+  - Handles damaging obstacles and player collision responses.
+  - Initiates directional camera shake when the player collides with solid objects. The shake direction is based on the collision direction, and its magnitude depends on the impact speed.
+
+SpriteSystem
+------------
+  - Iterates over entities containing SpriteComponent and draws their associated sprites.
+  - Uses the entity's location and sprite bounds to determine where the sprite should be drawn and how large it should appear.
+  - Supports both world-space and screen-space sprites. World-space sprites are transformed using the camera, while screen-space sprites remain fixed relative to the window.
+  - Clears the previous frame before rendering and displays the completed frame after drawing all applicable sprites.
+
+SpawnSystem
+-----------
+  - Handles entities that have a SpawnComponent, tracking the time remaining until their next spawn.
+  - When the spawn timer expires, the system creates an entity of the specified type and assigns its required components, including location, sprite, movement, and collision information.
+  - The star spawner creates a limited number of collectible stars at regular intervals.
+  - The map-loading logic ensures that only one star spawner is created across the loaded maps, even if additional spawner markers are present.
+
+Directional Screen Shake
+------------------------
+  - Screen shake is implemented through a CameraShakeComponent attached to the camera entity.
+  - When the player collides with a solid object, the collision system determines the direction and speed of the impact and updates the camera shake component.
+  - The CameraSystem applies the shake offset to the camera's position while the effect is active.
+  - The shake gradually decreases over its duration, returning the camera to its normal position once the effect finishes.
+  - This makes impacts more noticeable while ensuring that the camera does not remain displaced after a collision.
+
+============================================================
+3. GAMEPLAY BEHAVIOUR
+============================================================
+
+Player Movement and Physics
+---------------------------
+  - The player can move horizontally, jump, wall jump, and dash.
+  - Horizontal acceleration allows the player to build up speed rather than instantly reaching maximum velocity.
+  - Gravity produces different rising and falling speeds, with additional fast-fall behaviour when the down key is held.
+  - Wall sliding reduces falling speed while the player is pressing into a wall.
+  - Collision information is used to determine when the player can jump and which surfaces are being touched.
+
+World and Collectibles
+----------------------
+  - The game world is populated by loading the provided map files and creating entities for the corresponding terrain and objects.
+  - Terrain entities use sprite and collision components to provide both their visual appearance and physical boundaries.
+  - A single star spawner periodically creates collectible stars.
+  - Collecting stars removes them from the world and increases the player's score.
+
+Camera
+------
+  - The camera follows the player horizontally while maintaining a fixed vertical position.
+  - A hard exclusion region keeps the player from reaching the outer edges of the screen. When the player enters this region, the camera follows directly.
+  - A soft exclusion region allows the camera to track the player gradually before direct following is required.
+  - Camera shake is added to the camera position independently of its normal following behaviour.
+
+============================================================
+4. SYSTEM EXECUTION ORDER
+============================================================
+
+The systems are registered with the SystemManager and executed in the following order:
+
+  1. CollisionLateSystem
+     Saves the previous collision information.
+  2. InputSystem
+     Processes keyboard input and updates movement velocity.
+  3. GravitySystem
+     Applies gravity and modifies falling behaviour.
+  4. MovementSystem
+     Updates entity locations using velocity and delta time.
+  5. CollisionSystem
+     Detects and resolves collisions and updates contact information.
+  6. ScoreSystem
+     Updates the score display.
+  7. CameraSystem
+     Updates camera following and applies screen shake.
+  8. SpriteSystem
+     Draws the entities to the window.
+  9. SpawnSystem
+     Updates spawn timers and creates new entities when required.
+
+The order is important because each system depends on information produced by earlier systems. For example, input and gravity determine velocity before movement occurs, and collision detection resolves the resulting positions before the camera and rendering systems update.
+
+============================================================
+5. IMPLEMENTATION NOTES
+============================================================
+
+Delta Time
+----------
+  - Movement uses elapsed frame time to calculate displacement from velocity. This avoids making player movement dependent on the number of frames rendered per second.
+
+Collision State
+---------------
+  - Collision information is maintained between frames so that input and gravity can use the previous frame's contact state.
+  - Collision flags are refreshed during collision processing and are used by subsequent frames to determine whether the player is grounded or touching a wall.
+
+Spawner
+-------
+  - The map-loading process uses a shared spawner-created flag when loading both maps. This prevents multiple star spawners from being created.
+  - The spawner's component controls the spawn interval and total number of stars.
+
+Screen Shake
+------------
+  - The collision system calculates a shake direction and magnitude from the collision response and impact velocity.
+  - The camera system applies a temporary offset that decreases over time, producing a directional impact effect.
+
+============================================================
+6. AI USAGE
+============================================================
+
+Tool: ChatGPT (OpenAI).
+
+  - AI assistance was used to help implement and review portions of the movement, input, gravity, ECS engine, sprite rendering, collision, and spawning systems.
+  - AI assistance was also used to develop and refine directional camera shake and related collision behaviour.
+  - AI was used to help debug implementation issues, explain code behaviour, and suggest targeted fixes.
+  - The team reviewed and tested the suggested changes and is responsible for understanding the submitted implementation.
+  - This documentation was drafted with AI assistance
