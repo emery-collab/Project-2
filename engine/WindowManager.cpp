@@ -43,6 +43,7 @@ void WindowManager::DebugFrameRect(const Rect& r, int red, int green, int blue, 
     rectangle.setPoint(3, sf::Vector2f(topLeft.x, topLeft.y + height));
    
     rectangle.setOutlineColor(sf::Color(red, green, blue, alpha));
+    rectangle.setFillColor(sf::Color(0, 0, 0, 0));
     rectangle.setOutlineThickness(5);
     mWindow->draw(rectangle);
 }

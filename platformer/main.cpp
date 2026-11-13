@@ -182,7 +182,7 @@ int main(int argc, char* argv[]) {
     ECSEngine::SpriteID playerSpriteID;
     //purple guy
     playerSpriteID = engine.GetSpriteManager().RegisterTexture(gResourcePath+"spritesheet-characters-default.png",
-                ECSEngine::Rect(ECSEngine::Point2D(128, 128), 128, 128));
+                ECSEngine::Rect(ECSEngine::Point2D(140, 140), 116, 116));
     ECSEngine::EntityID id = em.CreateEntity("player");
     ECSEngine::Point2D spawn(13 * 64.0f, 6 * 64.0f);
     //location component
@@ -192,13 +192,13 @@ int main(int argc, char* argv[]) {
     //Sprite component
     ECSEngine::SpriteComponent sprComp{};
     sprComp.textureID = playerSpriteID;
-    sprComp.bounds = ECSEngine::Rect(ECSEngine::Point2D(0.0f, 0.0f), 64, 64);
+    sprComp.bounds = ECSEngine::Rect(ECSEngine::Point2D(0.0f, 0.0f), 128, 128);
     sprComp.worldSpace = true;
     em.AddComponent(id, sprComp);
     //collision
     ECSEngine::CollisionComponent collComp{};
-    collComp.collisionBox = ECSEngine::Rect(ECSEngine::Point2D(2,2), 124,124);
-    collComp.previousCollisionBox = ECSEngine::Rect(ECSEngine::Point2D(2,2), 60,60);
+    collComp.collisionBox = ECSEngine::Rect(ECSEngine::Point2D(14,16), 90,110);
+    collComp.previousCollisionBox = ECSEngine::Rect(ECSEngine::Point2D(14,16), 90,110);
     em.AddComponent(id, collComp);
     //playermovement
     ECSEngine::MovementComponent movComp{};
