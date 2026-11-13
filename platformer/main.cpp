@@ -192,20 +192,21 @@ int main(int argc, char* argv[]) {
     //Sprite component
     ECSEngine::SpriteComponent sprComp{};
     sprComp.textureID = playerSpriteID;
-    sprComp.bounds = ECSEngine::Rect(ECSEngine::Point2D(0.0f, 0.0f), 128, 128);
+    float s = 1.2f;
+    sprComp.bounds = ECSEngine::Rect(ECSEngine::Point2D(0.0f, 0.0f), 64*s, 64*s);
     sprComp.worldSpace = true;
     em.AddComponent(id, sprComp);
     //collision
     ECSEngine::CollisionComponent collComp{};
-    collComp.collisionBox = ECSEngine::Rect(ECSEngine::Point2D(14,16), 90,110);
-    collComp.previousCollisionBox = ECSEngine::Rect(ECSEngine::Point2D(14,16), 90,110);
+    collComp.collisionBox = ECSEngine::Rect(ECSEngine::Point2D(7*s,8*s), 45*s,55*s);
+    collComp.previousCollisionBox = ECSEngine::Rect(ECSEngine::Point2D(7*s,8*s), 45*s,55*s);
     em.AddComponent(id, collComp);
     //playermovement
     ECSEngine::MovementComponent movComp{};
     movComp.velocity = ECSEngine::Point2D(0,0);
     em.AddComponent(id, movComp);
     //gravity in pixels
-    float gravity = 200;
+    float gravity = 1500;
     ECSEngine::GravityComponent grvComp{ECSEngine::Point2D(0.0f,gravity)};
     em.AddComponent(id, grvComp);
     //inputComponent

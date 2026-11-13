@@ -33,23 +33,24 @@ public:
                 auto& follower = em.template GetComponent<CameraFollower>(cameraID);
                 auto& playerloc = em.template GetComponent<LocationComponent>(follower.entityID);
                 Point2D playerPoint2d = window.WorldToWindow(playerloc.loc);
+                float playerX = playerPoint2d.x+50;
                 float leftEdgeH = cam.hardExclusion.topLeft.x;
                 float rightEdgeH = cam.hardExclusion.topLeft.x + cam.hardExclusion.width;
                 float leftEdgeS = cam.softExclusion.topLeft.x;
                 float rightEdgeS = cam.softExclusion.topLeft.x + cam.softExclusion.width;
                 
-                if(playerPoint2d.x < leftEdgeH){
-                    float difference = cam.worldUnitsPerPixel*(leftEdgeH - playerPoint2d.x);
+                if(playerX < leftEdgeH){
+                    float difference = cam.worldUnitsPerPixel*(leftEdgeH - playerX);
                     cam.position.x = cam.position.x - difference;
                     //std::cout << "hard left: " << playerPoint2d.x << "\n";
                 }
-                else if(playerPoint2d.x > rightEdgeH){
+                else if(playerX > rightEdgeH){
                     //std::cout << "hard right: " << playerPoint2d.x << "\n";
-                    float difference = cam.worldUnitsPerPixel*(playerPoint2d.x - rightEdgeH);
+                    float difference = cam.worldUnitsPerPixel*(playerX - rightEdgeH);
                     cam.position.x = cam.position.x + difference;
                 }
-                else if(playerPoint2d.x >= leftEdgeH && playerPoint2d.x <= leftEdgeS ){
-                    float difference = cam.worldUnitsPerPixel*(leftEdgeS - playerPoint2d.x);
+                else if(playerX >= leftEdgeH && playerX <= leftEdgeS ){
+                    float difference = cam.worldUnitsPerPixel*(leftEdgeS - playerX);
                     float dt = engine->GetDeltaTime();
                     float step = difference * cam.speed * dt;
                     //std::cout << "soft left: " << playerPoint2d.x << "\n";
@@ -59,9 +60,9 @@ public:
                         cam.position.x = cam.position.x - difference;
                     }
                 }
-                else if(playerPoint2d.x <= rightEdgeH && playerPoint2d.x >= rightEdgeS ){
+                else if(playerX <= rightEdgeH && playerX >= rightEdgeS ){
                     //std::cout << "soft right: " << playerPoint2d.x << "\n";
-                    float difference = cam.worldUnitsPerPixel * (playerPoint2d.x - rightEdgeS);
+                    float difference = cam.worldUnitsPerPixel * (playerX - rightEdgeS);
                     float dt = engine->GetDeltaTime();
                     float step = difference * cam.speed * dt;
                     if(step < difference)
