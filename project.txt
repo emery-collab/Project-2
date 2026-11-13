@@ -142,7 +142,33 @@ The systems are registered with the SystemManager and executed in the following 
 The order is important because each system depends on information produced by earlier systems. For example, input and gravity determine velocity before movement occurs, and collision detection resolves the resulting positions before the camera and rendering systems update.
 
 ============================================================
-5. IMPLEMENTATION NOTES
+5. TEAM CONTRIBUTIONS
+============================================================
+
+Emery Theroux:
+  - Movement system: Delta-time-based movement updates to ensure
+    consistent movement regardless of frame rate.
+  - Input system: Player controls, horizontal acceleration, jumping,
+    variable jump height, wall jumping, and dash cooldown behaviour.
+  - Gravity system: Gravity, faster falling, fast-fall input, and
+    reduced falling speed while wall sliding.
+  - ECS engine: Implementation and integration of engine functionality
+    and system execution through the ECS architecture.
+  - Sprite system: Sprite rendering for world-space and screen-space
+    entities, including camera transformations.
+  - Collision late system: Previous-frame collision state updates
+    used for collision detection and resolution.
+  - Collision system: Collision detection and resolution, player
+    contact-state updates, collectible interactions, and directional
+    screen shake based on collision direction and impact speed.
+  - Spawn system: Timed spawning of collectible stars
+  - Sound effects: Implemented landing and wall-sliding sound effects
+    to provide audio feedback during player movement.
+  - Debugging and refinement: Fixed various gameplay and rendering
+    issues encountered during integration and testing.
+
+============================================================
+6. IMPLEMENTATION NOTES
 ============================================================
 
 Delta Time
@@ -165,7 +191,7 @@ Screen Shake
   - The camera system applies a temporary offset that decreases over time, producing a directional impact effect.
 
 ============================================================
-6. AI USAGE
+7. AI USAGE
 ============================================================
 
 Tool: ChatGPT (OpenAI).
