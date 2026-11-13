@@ -71,6 +71,14 @@ public:
                       input.keydown[Key::Left]) ||
                      (collision.onRightWall &&
                       input.keydown[Key::Right]));
+
+                // Play the sound once when wall sliding begins.
+                if (wallSliding && !input.wasWallSliding) {
+                    engine->GetSoundManager().GetSound("snowFootsteps").play();
+                }
+
+                // Remember the current wall-slide state.
+                input.wasWallSliding = wallSliding;
             }
 
             // Wall sliding limits downward velocity.
