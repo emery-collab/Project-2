@@ -80,6 +80,7 @@ public:
             window->draw(sprite);
         }
 
+        /*
         //temporary for debug of collision objects:
         for (const Entity& entity : em) {
             EntityID id = entity.GetID();
@@ -96,6 +97,7 @@ public:
 
             }
         }
+        */
 
         window->display();
 
