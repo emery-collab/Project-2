@@ -13,7 +13,7 @@ const float kJumpVelocity = 550.0f;
 const float kGroundRunAcceleration = 2000.0f;
 const float kAirRunAcceleration = 1200.0f;
 const float kDashInterval = 1.0f;
-constexpr float kWallJumpHorizontalVelocity = 400.0f;
+constexpr float kWallJumpHorizontalVelocity = 200.0f;
 
 // Gradually move a value toward its target.
 inline float Approach(float current, float target, float amount) {

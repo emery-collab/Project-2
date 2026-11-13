@@ -36,6 +36,9 @@ public:
 
         auto window = windowManager.GetWindow();
 
+        // Clear the previous frame before drawing the current one.
+        window->clear(sf::Color::Black);
+
         for (const Entity& entity : em) {
             EntityID id = entity.GetID();
 
