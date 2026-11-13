@@ -8,7 +8,7 @@
 namespace ECSEngine {
 
 const float kMaxRunVelocity = 400.0f;
-const float kDashVelocity = 900.0f;
+const float kDashVelocity = 1300.0f;
 const float kJumpVelocity = 550.0f;
 const float kGroundRunAcceleration = 2000.0f;
 const float kAirRunAcceleration = 1200.0f;

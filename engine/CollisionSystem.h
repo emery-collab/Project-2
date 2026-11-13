@@ -202,6 +202,47 @@ public:
                 }
             }
         }
+        //Star vs star 
+        std::vector<EntityID> starList;
+        for (const Entity& star : em) {
+            const EntityID starID = star.GetID();
+            if (IsStar(star)){
+                if(em.validEntity(starID)){
+                    starList.push_back(starID);
+                }
+
+            }
+        }
+        for(size_t i = 0; i < starList.size();++i){
+            for(size_t j = i+1; j < starList.size();++j){
+                auto& aLoc = em.template GetComponent<LocationComponent>(starList[i]);
+                auto& bLoc = em.template GetComponent<LocationComponent>(starList[j]);
+                auto& aCol = em.template GetComponent<CollisionComponent>(starList[i]);
+                auto& bCol = em.template GetComponent<CollisionComponent>(starList[j]);
+
+                Rect aBox = GetWorldBox(aLoc,aCol);
+                Rect bBox = GetWorldBox(bLoc,bCol);
+
+                if(Overlaps(aBox, bBox)){
+                    auto& aMov = em.template GetComponent<MovementComponent>(starList[i]);
+                    auto& bMov = em.template GetComponent<MovementComponent>(starList[j]);
+                    float diffX = bLoc.loc.x - aLoc.loc.x;
+                    float diffY = bLoc.loc.y - aLoc.loc.y;
+                    float diffVelocityX = bMov.velocity.x - aMov.velocity.x;
+                    float diffVelocityY = bMov.velocity.y - aMov.velocity.y;
+                    //dot product
+                    float dot = diffX*diffVelocityX + diffY*diffVelocityY;
+                    if(dot < 0){
+                        bMov.velocity.x *= -0.95;
+                        aMov.velocity.x *= -0.95;
+                        bMov.velocity.y *= -0.95;
+                        aMov.velocity.y *= -0.95;
+                    }
+                    
+                }
+                
+            }
+        }
 
         // Handle player interactions after static collision resolution.
         EntityID playerID = 0;
