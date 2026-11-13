@@ -205,7 +205,7 @@ int main(int argc, char* argv[]) {
     movComp.velocity = ECSEngine::Point2D(0,0);
     em.AddComponent(id, movComp);
     //gravity in pixels
-    float gravity = 1500;
+    float gravity = 200;
     ECSEngine::GravityComponent grvComp{ECSEngine::Point2D(0.0f,gravity)};
     em.AddComponent(id, grvComp);
     //inputComponent
@@ -246,13 +246,13 @@ int main(int argc, char* argv[]) {
     //fixedy is middle of screen. 
     float fixedY = 896.0f / 2;
     ECSEngine::Rect window = engine.GetWindowManager().GetWindowBounds();
-    camComp.position = ECSEngine::Point2D(spawn.x,fixedY);
+    camComp.position = ECSEngine::Point2D(spawn.x +1000,fixedY);
     //14 rows
     camComp.worldUnitsPerPixel = (14.0f*64.0f)/768.0f;
     camComp.hardExclusion = ECSEngine::Rect(ECSEngine::Point2D(0.1* window.width, 0), 0.8 * window.width,window.height);
     camComp.softExclusion = ECSEngine::Rect(ECSEngine::Point2D(0.3* window.width, 0), 0.4 * window.width,window.height);
     //speed of camera movement
-    camComp.speed = 200.0f;
+    camComp.speed = 1.0f;
     em.AddComponent(camID, camComp);
     //camera follow component
     ECSEngine::CameraFollower camFollComp{};
@@ -261,7 +261,7 @@ int main(int argc, char* argv[]) {
     //camera shake component
     ECSEngine::CameraShake camShkeComp{};
     camShkeComp.frameLimit = 0;
-    camShkeComp.offset = ECSEngine::Point2D(0,0);
+    camShkeComp.offset = ECSEngine::Point2D(0,19);
     em.AddComponent(camID, camShkeComp);
 
 
