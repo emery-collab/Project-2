@@ -38,6 +38,31 @@ private:
         return entity.GetType() == "star";
     }
 
+    // helper function for camera shake 
+    template <typename EngineType>
+    static void StartCameraShake(EngineType* engine,
+                                const Point2D& direction,
+                                float impactSpeed) {
+        auto& em = engine->GetEntityManager();
+
+        // Scale the shake according to the impact speed.
+        float magnitude = std::clamp(impactSpeed * 0.015f, 1.0f, 7.0f);
+
+        for (const Entity& entity : em) {
+            EntityID cameraID = entity.GetID();
+
+            if (!em.validEntity(cameraID) || !em.template HasComponent<CameraShake>(cameraID)) {
+                continue;
+            }
+
+            auto& shake = em.template GetComponent<CameraShake>(cameraID);
+
+            shake.frameLimit = 18;
+            shake.offset = direction * magnitude;
+            break;
+        }
+    }
+
 public:
     const std::string& GetName() const override {
         static std::string name("CollisionSystem");
@@ -109,6 +134,10 @@ public:
                 const bool crossedBottom = previousBox.topLeft.y >= obstacleBox.topLeft.y + obstacleBox.height - kEpsilon;
                 const bool crossedLeft = previousBox.topLeft.x + previousBox.width <= obstacleBox.topLeft.x + kEpsilon;
                 const bool crossedRight = previousBox.topLeft.x >= obstacleBox.topLeft.x + obstacleBox.width - kEpsilon;
+
+                // Save the player's position and velocity before collision resolution for screen shake purposes
+                const Point2D positionBeforeResolution = location.loc;
+                const Point2D velocityBeforeResolution = movement.velocity;
 
                 if (crossedTop || crossedBottom) {
                     if (crossedTop || (!crossedBottom &&
@@ -196,6 +225,31 @@ public:
                         }
                     }
                 }
+                // Screen shake for player collisions with static obstacles.
+                if (entity.GetType() == "player") {
+                    const float correctionX = location.loc.x - positionBeforeResolution.x;
+                    const float correctionY = location.loc.y - positionBeforeResolution.y;
+
+                    if (std::abs(correctionX) > 0.001f || std::abs(correctionY) > 0.001f) {
+
+                        Point2D direction(0.0f, 0.0f);
+                        float impactSpeed = 0.0f;
+
+                        // Use the axis with the larger positional correction.
+                        if (std::abs(correctionX) > std::abs(correctionY)) {
+                            direction.x = correctionX < 0.0f ? 1.0f : -1.0f;
+                            impactSpeed = std::abs(velocityBeforeResolution.x);
+                        } else {
+                            direction.y = correctionY < 0.0f ? 1.0f : -1.0f;
+                            impactSpeed = std::abs(velocityBeforeResolution.y);
+                        }
+
+                        if (impactSpeed > 30.0f) {
+                            StartCameraShake(engine, direction, impactSpeed);
+                        }
+                    }
+                }
+            // end collision loop for object instance
             }
         }
 

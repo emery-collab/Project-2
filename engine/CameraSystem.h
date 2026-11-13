@@ -71,20 +71,24 @@ public:
                         cam.position.x = cam.position.x + difference;
                     }
                 }
+                // Apply a temporary shake without modifying the camera's actual position.
                 auto& shake = em.template GetComponent<CameraShake>(cameraID);
-                if(shake.frameLimit>0){
-                    float currShake = shake.frameLimit / 10.0f;
-                    if(shake.frameLimit % 2 ==0){
-                        cam.position.y += currShake * shake.offset.y;
-                        window.SetWorldCenter(cam.position);
-                    }
-                    else{
-                        cam.position.y -= currShake * shake.offset.y;
-                        window.SetWorldCenter(cam.position);
-                    }
-                    shake.frameLimit--;
+                
+                Point2D shakeOffset(0.0f, 0.0f);
 
+                if (shake.frameLimit > 0) {
+                    // Gradually reduce shake strength as the animation progresses.
+                    float progress = static_cast<float>(shake.frameLimit) / 18.0f;
+                    float strength = progress * progress;
+
+                    // Alternate the direction while fading out.
+                    float direction = (shake.frameLimit % 2 == 0) ? 1.0f : -1.0f;
+                    shakeOffset = shake.offset * (strength * direction);
+                    shake.frameLimit--;
                 }
+
+                window.SetWorldCenter(cam.position + shakeOffset);
+                
                 break;
             }
 
