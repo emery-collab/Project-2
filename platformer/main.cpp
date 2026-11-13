@@ -134,7 +134,13 @@ void LoadMap(Engine& engine, const std::string& path, const std::string& file) {
                     entry.bbW, entry.bbH);
                 collComp.previousCollisionBox = ECSEngine::Rect(ECSEngine::Point2D(entry.bbToplx, entry.bbToply), 
                     entry.bbW, entry.bbH);
+                
+                if (ch == 'x') {
+                    collComp.doesDamage = 1;
+                }
+
                 em.AddComponent(id, collComp);
+            
             }
             if (ch == 'S') {
                 ECSEngine::SpawnComponent spwComp{};
@@ -234,7 +240,7 @@ int main(int argc, char* argv[]) {
         //Sprite component
         ECSEngine::SpriteComponent sprCompScore{};
         sprCompScore.textureID = scoreComp.digitTextureID[0];
-        sprCompScore.bounds = ECSEngine::Rect(ECSEngine::Point2D(0.0f, 0.0f), 64, 64);
+        sprCompScore.bounds = ECSEngine::Rect(ECSEngine::Point2D(16+j*64,16), 64, 64);
         sprCompScore.worldSpace = false;
         em.AddComponent(scoreComp.digitID[j], sprCompScore);
     }

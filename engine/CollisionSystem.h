@@ -90,6 +90,9 @@ public:
                 if (!obstacleCollision.staticEntity) {
                     continue;
                 }
+                if (obstacleCollision.doesDamage && entity.GetType() == "player" ) {
+                    continue;
+                }
 
                 const auto& obstacleLocation =
                     em.template GetComponent<LocationComponent>(obstacleID);
@@ -99,6 +102,7 @@ public:
                 if (!Overlaps(currentBox, obstacleBox)) {
                     continue;
                 }
+                
 
                 const Rect& previousBox = collision.previousCollisionBox;
                 const bool star = IsStar(entity);
