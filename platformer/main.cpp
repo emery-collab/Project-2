@@ -205,7 +205,7 @@ int main(int argc, char* argv[]) {
     movComp.velocity = ECSEngine::Point2D(0,0);
     em.AddComponent(id, movComp);
     //gravity in pixels
-    float gravity = 200;
+    float gravity = 1500;
     ECSEngine::GravityComponent grvComp{ECSEngine::Point2D(0.0f,gravity)};
     em.AddComponent(id, grvComp);
     //inputComponent
@@ -228,7 +228,7 @@ int main(int argc, char* argv[]) {
         scoreComp.digitID[j] = em.CreateEntity(std::string("digit"+std::to_string(j)));
         //location component
         ECSEngine::LocationComponent locCompScore{};
-        locCompScore.loc = ECSEngine::Point2D(16+j*50,16);
+        locCompScore.loc = ECSEngine::Point2D(16+j*64,16);
         em.AddComponent(scoreComp.digitID[j], locCompScore);
         //Sprite component
         ECSEngine::SpriteComponent sprCompScore{};
