@@ -222,6 +222,9 @@ Tool: ChatGPT (OpenAI).
   - AI was used to help debug implementation issues, explain code behaviour, and suggest targeted fixes.
   - The team reviewed and tested the suggested changes and is responsible for understanding the submitted implementation.
   - This documentation was drafted with AI assistance
+  - Reflection: The AI code helped speed up the process of templating code which I then rewrote and refit for the purposes of our project
+    A lot of the code ended up being rewritten or changed to stick with the implementation goals of the project. Occassionally it introduced bugs,
+    like screen tearing, which took a while to debug, and are still slightly present. It helps initially, but usually I end up debugging and rewriting.
 
 Tool: Claude (Anthropic).
 
