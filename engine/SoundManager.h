@@ -7,11 +7,17 @@
 
 namespace ECSEngine {
 
+// Owns all sounds, looked up by name.
 class SoundManager {
 public:
     SoundManager() = default;
     ~SoundManager() = default;
+
+    // Loads a sound and stores it as soundName (replaces any old one). Throws if loading fails.
     void RegisterSound(const std::string& soundPath, const std::string& soundName);
+
+    // Throws if soundName isn't registered. Reference is valid until the manager is
+    // destroyed or soundName is registered again.
     sf::Sound& GetSound(const std::string& soundName);
 
 private:

@@ -1,7 +1,7 @@
 #include "EntityManager.h"
 struct P { int x = 0; };
 struct H { int hp = 0; };
-//int argc, char* argv[]
+//int argc, char* argv[]e
 int main() {     
     // ECSEngine::EntityManager<P, H> em;
     // auto a = em.CreateEntity("a");

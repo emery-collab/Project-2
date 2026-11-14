@@ -14,10 +14,13 @@
 
 namespace ECSEngine {
 
+// Owns all entities and components. EntityID = index into mEntities.
 template <typename... Components>
 class EntityManager {
 public:
     static constexpr size_t kNullComponent = std::numeric_limits<size_t>::max();
+
+    // Reuses IDs of removed entities, so an old ID may become a new entity.
     [[nodiscard]] EntityID CreateEntity(const std::string& name)  {
         EntityID id;
         if (!mFreeEntities.empty()) {
@@ -35,17 +38,21 @@ public:
         mComponentIndices[id].fill(kNullComponent);
         return id;
     }
+    // Use to skip removed entities while iterating.
     bool validEntity(EntityID id) const {
         return id < mEntityValid.size() && mEntityValid[id];
     }
 
+    // Removes the entity and its components; its ID can be reused.
     void RemoveEntity(EntityID entity) {
         assert(validEntity(entity) && "Invalid Entity");
+        // AI-written (Claude): removes each component type the entity has.
         ([&] { if (HasComponent<Components>(entity)) RemoveComponent<Components>(entity); }(), ...);
         mEntityValid[entity] = false;
         mFreeEntities.push_back(entity);
     }
 
+    // Copies component in. May move T's storage, invalidating old GetComponent<T> references.
     template <typename T>
     void AddComponent(EntityID entity, T component) {
         assert(validEntity(entity) && "Invalid Entity");
@@ -69,6 +76,7 @@ public:
         mComponentIndices[entity][column] = index;
     }
 
+    // Entity must have a T (not checked). Its slot is reused later.
     template <typename T>
     void RemoveComponent(EntityID entity) {
         static_assert(slot<T> != -1, "T is not in this EntityManager");
@@ -92,6 +100,7 @@ public:
         return registryIndex != kNullComponent;
     }
 
+    // Check HasComponent<T> first. Reference is valid until the next AddComponent<T> or removal.
     template <typename T>
     T& GetComponent(EntityID entity) {
         static_assert(slot<T> != -1, "T is not in this EntityManager");        
@@ -103,11 +112,13 @@ public:
         return storage.mStorage[storageIndex];
     }
 
+    // Lives as long as the manager. Only use slots where mValid is true.
     template <typename T>
     ComponentStorage<T>& GetComponentStorage() {
         return std::get<ComponentStorage<T>>(mComponents);
     }
     
+    // Includes removed entities: skip ones where validEntity is false.
     using tEntity = std::vector<Entity>;
     using const_iterator = tEntity::const_iterator;
     const_iterator cbegin() const { return mEntities.begin(); }
